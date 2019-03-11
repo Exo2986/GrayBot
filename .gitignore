@@ -1,0 +1,6 @@
+.idea/
+Config/
+logs/
+dependency-reduced-pom.xml
+gray-framework-1.0.2.jar
+graybot.iml
