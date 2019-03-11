@@ -21,9 +21,9 @@ public class Discord {
 
     public Discord() {
         INSTANCE = this;
-        new DiscordApiBuilder().setToken(GrayBot.INSTANCE.getConfig().getEntry("DISCORD_TOKEN", String.class)).login().thenAccept(a -> {
+        new DiscordApiBuilder().setToken(GrayBot.INSTANCE.getConfig().getEntryAsString("DISCORD_TOKEN")).login().thenAccept(a -> {
             this.api = a;
-            this.api.updateActivity(ActivityType.LISTENING, "Boots");
+            this.api.updateActivity(ActivityType.LISTENING, "Boots (" + GrayBot.INSTANCE.getConfig().getEntryAsString("COMMAND_PREFIX") + "help)");
 
             consoleLog("Connected.");
 

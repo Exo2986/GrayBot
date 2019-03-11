@@ -44,6 +44,7 @@ public class GrayBot {
 
         //Add config entries
         config.addConfigEntry(new ConfigEntry<>("DISCORD_TOKEN", "token"));
+        config.addConfigEntry(new ConfigEntry<>("COMMAND_PREFIX", "."));
 
         config.init();
 
