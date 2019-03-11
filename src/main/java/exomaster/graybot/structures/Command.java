@@ -6,11 +6,13 @@ public abstract class Command {
     public String callback;
     public String name;
     public String description;
+    public String usage;
 
     public Command() {
         callback = "test";
         name = "test";
         description = "this is a description";
+        usage = "";
     }
 
     public void run (Message message) {

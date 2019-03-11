@@ -24,6 +24,7 @@ public class Help extends Command {
                 helpBuilder.append("__**\r\n`");
                 helpBuilder.append(commandPrefix);
                 helpBuilder.append(c.callback);
+                helpBuilder.append(c.usage);
                 helpBuilder.append(": ");
                 helpBuilder.append(c.description);
                 helpBuilder.append("`\r\n");
