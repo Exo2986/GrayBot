@@ -40,8 +40,6 @@ public class Fanfic extends Command {
             if (followsWeighted.size() == 0)
                 break;
 
-            consoleLog(word + " " + followsWeighted.size());
-
             word = followsWeighted.get(random.nextInt(followsWeighted.size()));
             chars+=word.length()+1;
         }
