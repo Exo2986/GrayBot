@@ -6,8 +6,7 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
-import java.io.File;
-import java.net.URLDecoder;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +15,7 @@ import java.util.Set;
 import static exomaster.grayfw.Util.consoleLog;
 
 public class Yeehaw extends Command {
-    private List<File> images = null;
+    private List<String> images = null;
     private Random random = new Random();
     public Yeehaw() {
         this.callback = "yeehaw";
@@ -29,15 +28,15 @@ public class Yeehaw extends Command {
         if (images == null) {
             Reflections reflections = new Reflections("cowboys", new ResourcesScanner());
             Set<String> resourceList = reflections.getResources(x -> x.contains("cowboy"));
-            ClassLoader loader = getClass().getClassLoader();
             images = new ArrayList<>();
             for (String s : resourceList) {
-                images.add(new File(URLDecoder.decode(loader.getResource(s).getFile())));
+                images.add(s);
             }
         }
+        ClassLoader loader = getClass().getClassLoader();
         new MessageBuilder()
                 .append("Yeehaw!")
-                .addAttachment(images.get(random.nextInt(images.size())))
+                .addAttachment(loader.getResourceAsStream(images.get(random.nextInt(images.size()))), "yeehaw.png")
                 .send(message.getChannel());
     }
 }

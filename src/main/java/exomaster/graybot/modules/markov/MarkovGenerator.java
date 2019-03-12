@@ -1,17 +1,15 @@
 package exomaster.graybot.modules.markov;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MarkovGenerator {
-    public static Map<String, HashMap<String, Integer>> generateFromFile(File file) {
+    public static Map<String, HashMap<String, Integer>> generateFromFile(InputStream stream) {
         Map<String, HashMap<String, Integer>> chain = new HashMap<>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
+            reader = new BufferedReader(new InputStreamReader(stream));
 
             String line;
             String lastWord = null;
@@ -37,6 +35,11 @@ public class MarkovGenerator {
                     chain.put(s, occ);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            stream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

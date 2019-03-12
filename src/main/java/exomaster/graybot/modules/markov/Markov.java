@@ -18,7 +18,6 @@ public class Markov extends Module {
     public void run() {
         INSTANCE = this;
         ClassLoader loader = getClass().getClassLoader();
-        File markov = new File(URLDecoder.decode(loader.getResource("markov/markov.txt").getFile()));
-        chain = MarkovGenerator.generateFromFile(markov);
+        chain = MarkovGenerator.generateFromFile(loader.getResourceAsStream("markov/markov.txt"));
     }
 }
