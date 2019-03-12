@@ -8,7 +8,7 @@ public class Echo extends Command {
         this.callback = "echo";
         this.name = "Echo";
         this.description = "Repeats what you say.";
-        this.usage = "<message>";
+        this.usage = " <message>";
     }
 
     @Override

@@ -19,14 +19,18 @@ public class CommandHandler implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
-        Message message = event.getMessage();
-        String msgC = message.getContent();
-        if (msgC.startsWith(commandPrefix)) {
-            for (Command c : commands) {
-                if (msgC.startsWith(commandPrefix + c.callback)) {
-                    c.run(message);
+        event.getMessageAuthor().asUser().ifPresent(user -> {
+            if (!user.isBot()) {
+                Message message = event.getMessage();
+                String msgC = message.getContent() + " ";
+                if (msgC.startsWith(commandPrefix)) {
+                    for (Command c : commands) {
+                        if (msgC.startsWith(commandPrefix + c.callback + " ")) {
+                            c.run(message);
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 }

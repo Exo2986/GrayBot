@@ -15,22 +15,22 @@ public class Boots extends Module {
     public void run() {
         Discord.INSTANCE.getApi().addMessageCreateListener(event -> {
             Message message = event.getMessage();
-            String key = message.getServer().get().getIdAsString() + "_" + message.getChannel().getIdAsString();
-            if (message.getContent().toLowerCase().contains("boots")) {
-                if (streaks.containsKey(key))
-                    streaks.put(key,streaks.get(key)+1);
-                else
-                    streaks.put(key, 1);
+            message.getUserAuthor().ifPresent(user -> {
+                if (!user.isYourself() && !user.isBot()) {
+                    String key = message.getServer().get().getIdAsString() + "_" + message.getChannel().getIdAsString();
+                    if (message.getContent().toLowerCase().contains("boots")) {
+                        if (streaks.containsKey(key))
+                            streaks.put(key, streaks.get(key) + 1);
+                        else
+                            streaks.put(key, 1);
 
-                message.getChannel().sendMessage("***WHEEZE*** (\uD83D\uDD25" + streaks.get(key) + ")");
-            } else if (streaks.containsKey(key)) {
-                message.getUserAuthor().ifPresent(user -> {
-                    if (!user.isYourself() && !user.isBot()){
+                        message.getChannel().sendMessage("***WHEEZE*** (\uD83D\uDD25" + streaks.get(key) + ")");
+                    } else if (streaks.containsKey(key)) {
                         message.getChannel().sendMessage("Streak ended! Score: " + streaks.get(key));
                         streaks.remove(key);
                     }
-                });
-            }
+                }
+            });
         });
     }
 }
