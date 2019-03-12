@@ -13,11 +13,13 @@ public class Markov extends Module {
     public static Markov INSTANCE;
 
     public Map<String, HashMap<String, Integer>> chain;
+    public Map<String, HashMap<String, Integer>> immortal;
 
     @Override
     public void run() {
         INSTANCE = this;
         ClassLoader loader = getClass().getClassLoader();
         chain = MarkovGenerator.generateFromFile(loader.getResourceAsStream("markov/markov.txt"));
+        immortal = MarkovGenerator.generateFromFile(loader.getResourceAsStream("markov/myimmortal.txt"));
     }
 }
