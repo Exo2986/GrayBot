@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class MarkovCommand extends Command {
+    public MarkovCommand() {
+        hidden = true;
+    }
+
     protected void createAndSendChain(Message message, MarkovStructure struct) {
         Map<String, HashMap<String, Integer>> chain = struct.chain;
         int chars = 0;

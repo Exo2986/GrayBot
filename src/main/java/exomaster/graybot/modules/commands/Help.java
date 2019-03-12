@@ -19,15 +19,17 @@ public class Help extends Command {
             StringBuilder helpBuilder = new StringBuilder();
             String commandPrefix = GrayBot.INSTANCE.getConfig().getEntryAsString("COMMAND_PREFIX");
             for (Command c : Commands.commands) {
-                helpBuilder.append("**__");
-                helpBuilder.append(c.name);
-                helpBuilder.append("__**\r\n`");
-                helpBuilder.append(commandPrefix);
-                helpBuilder.append(c.callback);
-                helpBuilder.append(c.usage);
-                helpBuilder.append(": ");
-                helpBuilder.append(c.description);
-                helpBuilder.append("`\r\n");
+                if(!c.hidden) {
+                    helpBuilder.append("**__");
+                    helpBuilder.append(c.name);
+                    helpBuilder.append("__**\r\n`");
+                    helpBuilder.append(commandPrefix);
+                    helpBuilder.append(c.callback);
+                    helpBuilder.append(c.usage);
+                    helpBuilder.append(": ");
+                    helpBuilder.append(c.description);
+                    helpBuilder.append("`\r\n");
+                }
             }
             helpMsg = helpBuilder.toString();
         }

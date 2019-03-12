@@ -14,6 +14,7 @@ public class Goffik extends MarkovCommand {
         this.callback = "goffik";
         this.name = "Goffik";
         this.description = "Immediately destroys all posr preps.";
+        this.hidden = false;
     }
 
     @Override

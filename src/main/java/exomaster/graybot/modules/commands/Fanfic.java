@@ -17,6 +17,7 @@ public class Fanfic extends MarkovCommand {
         this.callback = "fanfic";
         this.name = "Fanfic";
         this.description = "Generates an Imagine Dragons fanfic.";
+        this.hidden = false;
     }
 
     @Override

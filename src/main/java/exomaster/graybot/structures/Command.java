@@ -7,6 +7,7 @@ public abstract class Command {
     public String name;
     public String description;
     public String usage;
+    public boolean hidden = false;
 
     public Command() {
         callback = "test";
