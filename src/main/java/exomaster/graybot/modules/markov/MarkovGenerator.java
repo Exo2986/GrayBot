@@ -1,13 +1,16 @@
 package exomaster.graybot.modules.markov;
 
+import exomaster.graybot.structures.MarkovStructure;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MarkovGenerator {
-    public static Map<String, HashMap<String, Integer>> generateFromFile(InputStream stream) {
+    public static MarkovStructure generateFromFile(InputStream stream) {
         Map<String, HashMap<String, Integer>> chain = new HashMap<>();
-        BufferedReader reader = null;
+        HashMap<String, String> lowerToCap = new HashMap<>();
+        BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));
 
@@ -18,6 +21,11 @@ public class MarkovGenerator {
                     line = lastWord + " " + line;
 
                 String[] splt = line.split("\\s+");
+                for (String s : splt) {
+                    lowerToCap.put(s.toLowerCase(), s);
+                }
+                line = line.toLowerCase();
+                splt = line.split("\\s+");
                 for (int i = 0; i < splt.length; i++) {
                     String s = splt[i];
                     HashMap<String, Integer> occ;
@@ -28,7 +36,7 @@ public class MarkovGenerator {
                     }
 
                     if (i+1 < splt.length) {
-                        occ.put(splt[i+1], occ.getOrDefault(s, 0) + 1);
+                        occ.put(splt[i+1], occ.getOrDefault(splt[i+1], 0) + 1);
                     } else {
                         lastWord = s;
                     }
@@ -43,6 +51,6 @@ public class MarkovGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return chain;
+        return new MarkovStructure(chain, lowerToCap);
     }
 }

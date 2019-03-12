@@ -1,19 +1,15 @@
 package exomaster.graybot.modules.markov;
 
+import exomaster.graybot.structures.MarkovStructure;
 import exomaster.grayfw.modules.Module;
-
-import java.io.File;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
 
 import static exomaster.grayfw.Util.consoleLog;
 
 public class Markov extends Module {
     public static Markov INSTANCE;
 
-    public Map<String, HashMap<String, Integer>> chain;
-    public Map<String, HashMap<String, Integer>> immortal;
+    public MarkovStructure chain;
+    public MarkovStructure immortal;
 
     @Override
     public void run() {
