@@ -10,12 +10,13 @@ import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.io.File;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import static exomaster.grayfw.Util.consoleLog;
@@ -28,6 +29,16 @@ public class GrayBot {
         return INSTANCE.config;
     }
     private List<Module> modules;
+    private Properties properties;
+
+    public String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public void setProperty(String key, String val) {
+        properties.setProperty(key, val);
+        this.writePropertiesToFile();
+    }
 
     public static void main(String[] args) throws Exception {
         new GrayBot();
@@ -48,13 +59,55 @@ public class GrayBot {
 
         config.init();
 
+        File propertiesFile = new File("data/graybot.properties");
+
+        File filePath = new File(propertiesFile.getParent());
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+        }
+
+        if (!propertiesFile.exists()) {
+            try {
+                propertiesFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        readPropertiesFromFile();
+
         if (this.config.getHasUpdatedConfigFile()) {
-            consoleLog("Config.txt has been created or updated with missing values. Please input the proper values of each new entry before running this bot again.");
+            consoleLog("The config has been created or updated with missing values. Please input the proper values of each new entry before running this bot again.");
             System.exit(1);
         }
 
         consoleLog("Establishing connection with Discord...");
         new Discord();
+    }
+
+    public void readPropertiesFromFile() {
+        properties = new Properties();
+        InputStream stream;
+
+        try {
+            File file = new File("data/graybot.properties");
+            stream = new FileInputStream(file);
+
+            properties.load(stream);
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writePropertiesToFile() {
+        try {
+            File file = new File("data/graybot.properties");
+            OutputStream out = new FileOutputStream(file);
+            properties.store(out, "GrayBot Properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void postDiscordApiAuth() {
