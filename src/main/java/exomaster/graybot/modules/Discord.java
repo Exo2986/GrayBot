@@ -24,6 +24,7 @@ public class Discord {
         new DiscordApiBuilder().setToken(GrayBot.INSTANCE.getConfig().getEntryAsString("DISCORD_TOKEN")).login().thenAccept(a -> {
             this.api = a;
             this.api.updateActivity(ActivityType.LISTENING, "Boots (" + GrayBot.INSTANCE.getConfig().getEntryAsString("COMMAND_PREFIX") + "help)");
+            this.api.setMessageCacheSize(10, this.api.getDefaultMessageCacheStorageTimeInSeconds());
 
             consoleLog("Connected.");
 

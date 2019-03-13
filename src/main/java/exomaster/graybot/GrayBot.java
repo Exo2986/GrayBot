@@ -40,7 +40,7 @@ public class GrayBot {
         logging = new Logging();
         logging.run();
 
-        config = new Config("Config/GrayBot.cfg");
+        config = new Config("config/graybot.cfg");
 
         //Add config entries
         config.addConfigEntry(new ConfigEntry<>("DISCORD_TOKEN", "token"));
