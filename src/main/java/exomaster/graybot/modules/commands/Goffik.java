@@ -27,7 +27,7 @@ public class Goffik extends MarkovCommand {
             chapter = Integer.toString(Integer.parseInt(chapter) + 1);
         }
         GrayBot.INSTANCE.setProperty("MyImmortalChapter", chapter);
-        
+
         createAndSendChain(message, "Chapter " + chapter + ":\r\n\r\n", Markov.INSTANCE.immortal);
     }
 }
