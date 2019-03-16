@@ -40,6 +40,16 @@ public class GrayBot {
         this.writePropertiesToFile();
     }
 
+    public boolean tryCreateProperty(String key, String val) {
+        if (!properties.containsKey(key)) {
+            properties.setProperty(key, val);
+            this.writePropertiesToFile();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         new GrayBot();
     }
@@ -56,6 +66,8 @@ public class GrayBot {
         //Add config entries
         config.addConfigEntry(new ConfigEntry<>("DISCORD_TOKEN", "token"));
         config.addConfigEntry(new ConfigEntry<>("COMMAND_PREFIX", "."));
+        config.addConfigEntry(new ConfigEntry<>("SPOTIFY_CLIENT_ID", "id"));
+        config.addConfigEntry(new ConfigEntry<>("SPOTIFY_CLIENT_SECRET", "token"));
 
         config.init();
 
