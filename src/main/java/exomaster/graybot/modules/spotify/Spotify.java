@@ -5,6 +5,7 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.specification.Playlist;
+import com.wrapper.spotify.model_objects.specification.Track;
 import exomaster.graybot.GrayBot;
 import exomaster.graybot.modules.Discord;
 import exomaster.graybot.modules.spotify.webserver.SpotifyServer;
@@ -16,8 +17,15 @@ import org.javacord.api.entity.server.Server;
 
 import java.awt.*;
 import java.net.URI;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static exomaster.grayfw.Util.consoleLog;
 
@@ -40,7 +48,7 @@ public class Spotify extends Module {
     }
 
     public String createDescription(String name) {
-        return "Server playlist for " + name + ", created by GrayBot (https://github.com/ExoMaster/GrayBot)";
+        return "Server playlist for " + name + ", created by GrayBot";
     }
 
     public boolean addSpotifyEnabledServer(Server server, TextChannel channel) {
@@ -82,6 +90,12 @@ public class Spotify extends Module {
         grayBot.setProperty("spotify_enabled_servers", storedIDs);
     }
 
+    public void createServerPlaylists() {
+        for (Server server : spotifyEnabledServers) {
+            createServerPlaylist(server);
+        }
+    }
+
     public Playlist createServerPlaylist(Server server) {
         if (!spotifyEnabledServers.contains(server)) return null;
         consoleLog("Creating server playlist for " + server.getName());
@@ -92,21 +106,40 @@ public class Spotify extends Module {
             if (msg.contains("https://open.spotify.com/track/")) {
                 String songID = msg.replaceAll("(https://open.spotify.com/track/)|([?].*)", "");
                 try {
-                    songs.add("spotify:track:" + spotify.getTrack(songID).market(CountryCode.US).build().execute().getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    Track track = spotify.getTrack(songID).build().execute();
+                    if (track != null) {
+                        songs.add("spotify:track:" + track.getId());
+                    }
+                } catch (Exception e) {}
             }
         });
+        consoleLog("Found " + songs.size() + " songs on " + server.getName() + ".");
         try {
-            spotify.replacePlaylistsTracks(serverPlaylists.get(server), songs.toArray(new String[songs.size()]))
+            ArrayList<String> songsArr = new ArrayList<>();
+            Random random = new Random();
+            for (int i = 0; i < 30; i++) {
+                String s = songs.get(random.nextInt(songs.size()));
+                if (!songsArr.contains(s)) {
+                    songsArr.add(i, s);
+                } else {
+                    i--;
+                }
+            }
+            spotify.replacePlaylistsTracks(serverPlaylists.get(server), songsArr.toArray(new String[30]))
                     .build()
                     .execute();
 
-            return spotify.getPlaylist(serverPlaylists.get(server)).build().execute();
+            Playlist playlist = spotify.getPlaylist(serverPlaylists.get(server)).build().execute();
+
+            consoleLog("Completed.");
+
+            channel.sendMessage("Updated: " + playlist.getExternalUrls().get("spotify"));
+
+            return playlist;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        consoleLog("Failed.");
         return null;
     }
 
@@ -129,7 +162,7 @@ public class Spotify extends Module {
         }
 
         URI uri = spotify.authorizationCodeUri()
-                .scope("playlist-modify-public").build().execute();
+                .scope("playlist-modify-public,playlist-modify-private").build().execute();
         try {
             Desktop desktop = Desktop.getDesktop();
             desktop.browse(uri);
@@ -166,6 +199,22 @@ public class Spotify extends Module {
                 String playlistID = grayBot.getProperty("spotify_playlist_" + s.getIdAsString());
                 serverPlaylists.put(s, playlistID);
             }
+            createServerPlaylists();
         }
+
+        LocalDateTime localNow = LocalDateTime.now();
+        ZoneId currentZone = ZoneId.of("America/New_York");
+        ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+        ZonedDateTime zonedNext2 ;
+        zonedNext2 = zonedNow.withHour(18).withMinute(0).withSecond(0);
+        if(zonedNow.compareTo(zonedNext2) > 0)
+            zonedNext2 = zonedNext2.plusDays(1);
+
+        Duration duration = Duration.between(zonedNow, zonedNext2);
+        long initalDelay = duration.getSeconds();
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(new UpdatePlaylist(), initalDelay,
+                24*60*60, TimeUnit.SECONDS);
     }
 }

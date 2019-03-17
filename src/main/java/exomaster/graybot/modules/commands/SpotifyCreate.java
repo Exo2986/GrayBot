@@ -16,8 +16,7 @@ public class SpotifyCreate extends Command {
     @Override
     public void run(Message message) {
         message.getServer().ifPresent(server -> {
-            Playlist playlist = Spotify.INSTANCE.createServerPlaylist(server);
-            message.getChannel().sendMessage(playlist.getExternalUrls().get("spotify"));
+            Spotify.INSTANCE.createServerPlaylist(server);
         });
 
     }
