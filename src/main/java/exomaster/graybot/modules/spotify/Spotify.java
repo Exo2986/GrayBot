@@ -199,7 +199,6 @@ public class Spotify extends Module {
                 String playlistID = grayBot.getProperty("spotify_playlist_" + s.getIdAsString());
                 serverPlaylists.put(s, playlistID);
             }
-            createServerPlaylists();
         }
 
         LocalDateTime localNow = LocalDateTime.now();
