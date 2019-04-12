@@ -1,6 +1,8 @@
 package exomaster.graybot;
 
 import exomaster.graybot.modules.Discord;
+import exomaster.graybot.modules.spotify.UpdatePlaylist;
+import exomaster.graybot.scheduled.Restart;
 import exomaster.grayfw.config.Config;
 import exomaster.grayfw.config.ConfigEntry;
 import exomaster.grayfw.logging.Logging;
@@ -14,10 +16,17 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static exomaster.grayfw.Util.consoleLog;
 public class GrayBot {
@@ -110,6 +119,23 @@ public class GrayBot {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void SetupAutoRestart() {
+        LocalDateTime localNow = LocalDateTime.now();
+        ZoneId currentZone = ZoneId.of("America/New_York");
+        ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+        ZonedDateTime zonedNext2 ;
+        zonedNext2 = zonedNow.withHour(0).withMinute(0).withSecond(0);
+        if(zonedNow.compareTo(zonedNext2) > 0)
+            zonedNext2 = zonedNext2.plusDays(1);
+
+        Duration duration = Duration.between(zonedNow, zonedNext2);
+        long initalDelay = duration.getSeconds();
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(new Restart(), initalDelay,
+                24*60*60, TimeUnit.SECONDS);
     }
 
     public void writePropertiesToFile() {
